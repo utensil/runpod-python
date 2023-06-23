@@ -38,7 +38,7 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
                gpu_count:int=1, volume_in_gb:int=0, container_disk_in_gb:int=5,
                min_vcpu_count:int=1, min_memory_in_gb:int=1, docker_args:str="",
                ports:Optional[str]=None, volume_mount_path:str="/workspace",
-               env:Optional[dict]=None, min_download=None,
+               env:Optional[dict]=None, support_public_ip=None, min_download=None,
                min_upload=None, network_volume_id=None, template_id=None, stop_after=None, terminate_after=None):
     '''
     Create a pod
@@ -65,7 +65,8 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
     raw_request = pods.generate_pod_deployment_mutation(
         name, image_name, gpu_type_id, cloud_type, data_center_id, country_code, gpu_count, volume_in_gb,
         container_disk_in_gb, min_vcpu_count, min_memory_in_gb, docker_args,
-        ports, volume_mount_path, env)
+        ports, volume_mount_path, env, support_public_ip, min_download, min_upload,
+        network_volume_id, template_id, stop_after, terminate_after)
     
     print(f'create_pod REQ: {raw_request}')
     
