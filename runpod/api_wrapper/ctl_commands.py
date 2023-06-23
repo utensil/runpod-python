@@ -104,7 +104,7 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
     cleaned_response = raw_response["data"]["podFindAndDeployOnDemand"]
     return cleaned_response
 
-def create_spot_pod(name, image_name, gpu_type_id, cloud_type="ALL", gpu_count=1, volume_in_gb=0,
+def create_spot_pod(name, image_name, gpu_type_id, bid_per_gpu, cloud_type="ALL", gpu_count=1, volume_in_gb=0,
                container_disk_in_gb=5, min_vcpu_count=1, min_memory_in_gb=1, docker_args="",
                ports=None, volume_mount_path="/workspace", env=None, support_public_ip=None, min_download=None,
                min_upload=None, network_volume_id=None, template_id=None, stop_after=None, terminate_after=None):
@@ -114,7 +114,7 @@ def create_spot_pod(name, image_name, gpu_type_id, cloud_type="ALL", gpu_count=1
 
     with debug_error('create_spot_pod') as ctx:
         ctx.req = pods.generate_spot_pod_deployment_mutation(
-            name, image_name, gpu_type_id, cloud_type, gpu_count, volume_in_gb,
+            name, image_name, gpu_type_id, bid_per_gpu, cloud_type, gpu_count, volume_in_gb,
             container_disk_in_gb, min_vcpu_count, min_memory_in_gb, docker_args,
             ports, volume_mount_path, env, support_public_ip, min_download, min_upload,
             network_volume_id, template_id, stop_after, terminate_after)

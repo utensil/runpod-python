@@ -87,7 +87,7 @@ def generate_pod_deployment_mutation(
 # TODO: add bidPerGpu
 
 def generate_spot_pod_deployment_mutation(
-        name, image_name, gpu_type_id, cloud_type=None, gpu_count=None,
+        name, image_name, gpu_type_id, bid_per_gpu, cloud_type=None, gpu_count=None,
         volume_in_gb=None, container_disk_in_gb=None, min_vcpu_count=None,
         min_memory_in_gb=None, docker_args=None, ports=None, volume_mount_path=None,
         env=None, support_public_ip=None, min_download=None, min_upload=None,
@@ -96,6 +96,8 @@ def generate_spot_pod_deployment_mutation(
     Generates a mutation to deploy an interruptable pod.
     '''
     input_fields = []
+
+    input_fields.append(f"bidPerGpu: {bid_per_gpu}")
 
     if cloud_type is not None:
         input_fields.append(f"cloudType: {cloud_type}")
