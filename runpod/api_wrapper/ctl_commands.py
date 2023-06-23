@@ -4,7 +4,7 @@ RunPod | API Wrapper | CTL Commands
 # pylint: disable=too-many-arguments,too-many-locals
 
 from typing import Optional
-from .queries import gpus
+from .queries import gpus, pod
 from .graphql import run_graphql_query
 from .mutations import pods
 
@@ -131,3 +131,15 @@ def terminate_pod(pod_id: str):
     run_graphql_query(
         pods.generate_pod_terminate_mutation(pod_id)
     )
+
+def get_pod(pod_id):
+    '''
+    Get a specific pod
+    '''
+
+    raw_request = pod.generate_pod_query(pod_id)
+    print(f'get_pod REQ: {raw_request}')
+    raw_return = run_graphql_query(raw_request)
+    print(f'get_pod RES: {raw_return}')
+    cleaned_return = raw_return["data"]
+    return cleaned_return
