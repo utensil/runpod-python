@@ -8,7 +8,8 @@ def generate_pod_deployment_mutation(
         name, image_name, gpu_type_id, cloud_type=None, data_center_id=None, country_code=None,
         gpu_count=None, volume_in_gb=None, container_disk_in_gb=None, min_vcpu_count=None,
         min_memory_in_gb=None, docker_args=None, ports=None, volume_mount_path=None,
-        env=None, support_public_ip=None):
+        env=None, support_public_ip=None, min_download=None, min_upload=None, 
+        network_volume_id=None, template_id=None, stop_after=None, terminate_after=None):
     '''
     Generates a mutation to deploy a pod on demand.
     '''
@@ -48,6 +49,19 @@ def generate_pod_deployment_mutation(
         input_fields.append(f"env: [{env_string}]")
     if support_public_ip is not None:
         input_fields.append(f"supportPublicIp: {support_public_ip}")
+
+    if min_download is not None:
+        input_fields.append(f"minDownload: {min_download}")
+    if min_upload is not None:
+        input_fields.append(f"minUpload : {min_upload}")
+    if network_volume_id is not None:
+        input_fields.append(f"networkVolumeId: {network_volume_id}")
+    if template_id is not None:
+        input_fields.append(f"templateId: {template_id}")
+    if stop_after is not None:
+        input_fields.append(f"stopAfter: {stop_after}")
+    if terminate_after is not None:
+        input_fields.append(f"terminateAfter: {terminate_after}")
 
     input_string = ", ".join(input_fields)
 
