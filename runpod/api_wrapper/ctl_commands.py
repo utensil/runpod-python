@@ -17,6 +17,9 @@ class APIContext:
         self.req = None
         self.res = None
 
+    def __repr__(self) -> str:
+        return f'\n{self.api_name}REQ: {self.req}\nRES: {self.res}\n'
+
 class APIError(ValueError):
     def __init__(self, message, ctx, *args):
         self.message = message
