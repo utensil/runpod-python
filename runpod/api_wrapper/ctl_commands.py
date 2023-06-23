@@ -8,13 +8,37 @@ from .queries import gpus, pod
 from .graphql import run_graphql_query
 from .mutations import pods
 
+from contextlib import contextmanager
+import os
+
+class context:
+    def __init__(self, api_name) -> None:
+        self.api_name = api_name
+        self.req = None
+        self.res = None
+
+@contextmanager
+def debug_error(api_name, *_args, **_kwds):
+    ctx = context(api_name)
+    try:
+        yield ctx
+    except Exception as ex:
+        if os.environ.get('RUNPOD_DEBUG', 'true').lower() != 'true':
+            raise ex
+        else:
+            print(f'{ctx.api_name} REQ: {ctx.req}')
+            print(f'{ctx.api_name} RES: {ctx.res}')
+            raise ex
 
 def get_gpus() -> dict:
     '''
     Get all GPU types
     '''
-    raw_return = run_graphql_query(gpus.QUERY_GPU_TYPES)
-    cleaned_return = raw_return["data"]["gpuTypes"]
+    with debug_error('get_gpus') as ctx:
+        ctx.req = gpus.QUERY_GPU_TYPES
+        ctx.res = run_graphql_query(ctx.req)
+        cleaned_return = ctx.res["data"]["gpuTypes"]
+
     return cleaned_return
 
 
@@ -24,12 +48,11 @@ def get_gpu(gpu_id : str):
     
     :param gpu_id: the id of the gpu
     '''
+    with debug_error('get_gpu') as ctx:
+        ctx.req = gpus.generate_gpu_query(gpu_id)
+        ctx.res = run_graphql_query(ctx.req)
+        cleaned_return = ctx.res["data"]["gpuTypes"][0]
 
-    raw_request = gpus.generate_gpu_query(gpu_id)
-    print(f'get_gpu REQ: {raw_request}')
-    raw_return = run_graphql_query(raw_request)
-    print(f'get_gpu RES: {raw_return}')
-    cleaned_return = raw_return["data"]["gpuTypes"][0]
     return cleaned_return
 
 
@@ -76,7 +99,6 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
 
     cleaned_response = raw_response["data"]["podFindAndDeployOnDemand"]
     return cleaned_response
-
 
 def stop_pod(pod_id: str):
     '''
@@ -138,9 +160,9 @@ def get_pod(pod_id):
     Get a specific pod
     '''
 
-    raw_request = pod.generate_pod_query(pod_id)
-    print(f'get_pod REQ: {raw_request}')
-    raw_return = run_graphql_query(raw_request)
-    print(f'get_pod RES: {raw_return}')
-    cleaned_return = raw_return["data"]
+    with debug_error('get_pod') as ctx:
+        ctx.req = pod.generate_pod_query(pod_id)
+        ctx.res = run_graphql_query(ctx.req)
+        cleaned_return = ctx.res["data"]
+        
     return cleaned_return
