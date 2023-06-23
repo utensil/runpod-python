@@ -24,7 +24,11 @@ def get_gpu(gpu_id : str):
     
     :param gpu_id: the id of the gpu
     '''
-    raw_return = run_graphql_query(gpus.generate_gpu_query(gpu_id))
+
+    raw_request = gpus.generate_gpu_query(gpu_id)
+    print(f'get_gpu REQ: {raw_request}')
+    raw_return = run_graphql_query(raw_request)
+    print(f'get_gpu RES: {raw_return}')
     cleaned_return = raw_return["data"]["gpuTypes"][0]
     return cleaned_return
 
