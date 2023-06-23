@@ -59,8 +59,8 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
 
     raw_response = run_graphql_query(
         pods.generate_pod_deployment_mutation(
-            name, image_name, gpu_type_id, cloud_type, data_center_id, country_code, gpu_count,
-            volume_in_gb, container_disk_in_gb, min_vcpu_count, min_memory_in_gb, docker_args,
+            name, image_name, gpu_type_id, cloud_type, data_center_id, country_code, gpu_count, volume_in_gb,
+            container_disk_in_gb, min_vcpu_count, min_memory_in_gb, docker_args,
             ports, volume_mount_path, env)
     )
 
