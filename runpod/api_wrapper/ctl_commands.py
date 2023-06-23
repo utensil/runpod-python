@@ -22,13 +22,17 @@ def debug_error(api_name, *_args, **_kwds):
     ctx = context(api_name)
     try:
         yield ctx
-    except Exception as ex:
-        if os.environ.get('RUNPOD_DEBUG', 'true').lower() != 'true':
-            raise ex
-        else:
+    # except Exception as ex:
+    #     if os.environ.get('RUNPOD_DEBUG', 'true').lower() != 'true':
+    #         raise ex
+    #     else:
+    #         print(f'{ctx.api_name} REQ: {ctx.req}')
+    #         print(f'{ctx.api_name} RES: {ctx.res}')
+    #         raise ex
+    finally:
+        if os.environ.get('RUNPOD_DEBUG', 'true').lower() == 'true':
             print(f'{ctx.api_name} REQ: {ctx.req}')
             print(f'{ctx.api_name} RES: {ctx.res}')
-            raise ex
 
 def get_gpus() -> dict:
     '''
