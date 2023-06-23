@@ -11,24 +11,25 @@ from .mutations import pods
 from contextlib import contextmanager
 import os
 
-class context:
+class APIContext:
     def __init__(self, api_name) -> None:
         self.api_name = api_name
         self.req = None
         self.res = None
 
+class APIError(ValueError):
+    def __init__(self, message, ctx, *args):
+        self.message = message
+        self.ctx = ctx         
+        super(APIError, self).__init__(message, ctx, *args)
+
 @contextmanager
 def debug_error(api_name, *_args, **_kwds):
-    ctx = context(api_name)
+    ctx = APIContext(api_name)
     try:
         yield ctx
-    # except Exception as ex:
-    #     if os.environ.get('RUNPOD_DEBUG', 'true').lower() != 'true':
-    #         raise ex
-    #     else:
-    #         print(f'{ctx.api_name} REQ: {ctx.req}')
-    #         print(f'{ctx.api_name} RES: {ctx.res}')
-    #         raise ex
+    except Exception as ex:
+        raise APIError('RunPod API Error', ctx) from ex
     finally:
         if os.environ.get('RUNPOD_DEBUG', 'true').lower() == 'true':
             print(f'{ctx.api_name} REQ: {ctx.req}')
@@ -42,8 +43,7 @@ def get_gpus() -> dict:
         ctx.req = gpus.QUERY_GPU_TYPES
         ctx.res = run_graphql_query(ctx.req)
         cleaned_return = ctx.res["data"]["gpuTypes"]
-
-    return cleaned_return
+        return cleaned_return
 
 
 def get_gpu(gpu_id : str):
@@ -57,7 +57,7 @@ def get_gpu(gpu_id : str):
         ctx.res = run_graphql_query(ctx.req)
         cleaned_return = ctx.res["data"]["gpuTypes"][0]
 
-    return cleaned_return
+        return cleaned_return
 
 
 def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str="ALL",
@@ -89,19 +89,14 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
     >>> pod_id = runpod.create_pod("test", "runpod/stack", "NVIDIA GeForce RTX 3070")
     '''
 
-    raw_request = pods.generate_pod_deployment_mutation(
-        name, image_name, gpu_type_id, cloud_type, data_center_id, country_code, gpu_count, volume_in_gb,
-        container_disk_in_gb, min_vcpu_count, min_memory_in_gb, docker_args,
-        ports, volume_mount_path, env, support_public_ip, min_download, min_upload,
-        network_volume_id, template_id, stop_after, terminate_after)
-    
-    print(f'create_pod REQ: {raw_request}')
-    
-    raw_response = run_graphql_query(raw_request)
-
-    print(f'create_pod RES: {raw_response}')
-
-    cleaned_response = raw_response["data"]["podFindAndDeployOnDemand"]
+    with debug_error('create_pod') as ctx:
+        ctx.req = pods.generate_pod_deployment_mutation(
+            name, image_name, gpu_type_id, cloud_type, data_center_id, country_code, gpu_count, volume_in_gb,
+            container_disk_in_gb, min_vcpu_count, min_memory_in_gb, docker_args,
+            ports, volume_mount_path, env, support_public_ip, min_download, min_upload,
+            network_volume_id, template_id, stop_after, terminate_after)
+        ctx.res = run_graphql_query(ctx.req)
+        cleaned_response = ctx.res["data"]["podFindAndDeployOnDemand"]
     return cleaned_response
 
 def create_spot_pod(name, image_name, gpu_type_id, bid_per_gpu, cloud_type="ALL", gpu_count=1, volume_in_gb=0,
@@ -120,7 +115,8 @@ def create_spot_pod(name, image_name, gpu_type_id, bid_per_gpu, cloud_type="ALL"
             network_volume_id, template_id, stop_after, terminate_after)
         ctx.res = run_graphql_query(ctx.req)
         cleaned_response = ctx.res["data"]["podRentInterruptable"]
-    return cleaned_response
+
+        return cleaned_response
 
 def stop_pod(pod_id: str):
     '''
@@ -186,5 +182,5 @@ def get_pod(pod_id):
         ctx.req = pod.generate_pod_query(pod_id)
         ctx.res = run_graphql_query(ctx.req)
         cleaned_return = ctx.res["data"]
-        
-    return cleaned_return
+
+        return cleaned_return
