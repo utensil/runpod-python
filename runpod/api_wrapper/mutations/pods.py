@@ -53,7 +53,7 @@ def generate_pod_deployment_mutation(
     if min_download is not None:
         input_fields.append(f"minDownload: {min_download}")
     if min_upload is not None:
-        input_fields.append(f"minUpload : {min_upload}")
+        input_fields.append(f"minUpload: {min_upload}")
     if network_volume_id is not None:
         input_fields.append(f"networkVolumeId: {network_volume_id}")
     if template_id is not None:
