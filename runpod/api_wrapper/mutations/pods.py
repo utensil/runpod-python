@@ -8,7 +8,7 @@ def generate_pod_deployment_mutation(
         name, image_name, gpu_type_id, cloud_type=None, data_center_id=None, country_code=None,
         gpu_count=None, volume_in_gb=None, container_disk_in_gb=None, min_vcpu_count=None,
         min_memory_in_gb=None, docker_args=None, ports=None, volume_mount_path=None,
-        env=None, support_public_ip=None, min_download=None, min_upload=None, 
+        env=None, support_public_ip=None, min_download=None, min_upload=None,
         network_volume_id=None, template_id=None, stop_after=None, terminate_after=None):
     '''
     Generates a mutation to deploy a pod on demand.
@@ -63,7 +63,7 @@ def generate_pod_deployment_mutation(
     if terminate_after is not None:
         input_fields.append(f"terminateAfter: {terminate_after}")
 
-    input_string = ", ".join(input_fields)
+    input_string = ", \n".join(input_fields)
 
     return f"""
     mutation {{
