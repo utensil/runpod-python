@@ -7,7 +7,7 @@ from .endpoint import Endpoint
 from .endpoint import AsyncioEndpoint, AsyncioJob
 from .api_wrapper.ctl_commands import(
     get_gpus, get_gpu,
-    create_pod, stop_pod, resume_pod, terminate_pod
+    create_pod, stop_pod, resume_pod, terminate_pod, get_pod
 )
 
 api_key = None  # pylint: disable=invalid-name
