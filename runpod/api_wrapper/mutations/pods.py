@@ -137,7 +137,7 @@ def generate_spot_pod_deployment_mutation(
     if network_volume_id is not None:
         input_fields.append(f"networkVolumeId: {network_volume_id}")
     if template_id is not None:
-        input_fields.append(f"templateId: {template_id}")
+        input_fields.append(f'templateId: "{template_id}"')
     if stop_after is not None:
         input_fields.append(f"stopAfter: {stop_after}")
     if terminate_after is not None:
