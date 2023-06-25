@@ -34,7 +34,7 @@ def debug_error(api_name, *_args, **_kwds):
     except Exception as ex:
         raise APIError('RunPod API Error', ctx) from ex
     finally:
-        if os.environ.get('RUNPOD_DEBUG', 'true').lower() == 'true':
+        if os.environ.get('RUNPOD_DEBUG', '').lower() == 'true':
             print(f'{ctx.api_name} REQ: {ctx.req}')
             print(f'{ctx.api_name} RES: {ctx.res}')
 
