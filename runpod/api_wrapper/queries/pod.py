@@ -14,8 +14,15 @@ def generate_pod_query(pod_id):
             lastStatusChange
             uptimeSeconds
             runtime {{ uptimeInSeconds }}
-            machine {{ maxDownloadSpeedMbps maxUploadSpeedMbps }}
-            latestTelemetry {{ ...PodTelemetry }}
+            machine {{ maxDownloadSpeedMbps maxUploadSpeedMbps diskMBps }}
+            latestTelemetry {{
+                cpuUtilization
+                memoryUtilization
+                averageGpuMetrics {{
+                    percentUtilization
+                    memoryUtilization
+                }}
+            }}
         }}
     }}
     """
