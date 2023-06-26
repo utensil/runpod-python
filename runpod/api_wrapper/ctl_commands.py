@@ -3,13 +3,13 @@ RunPod | API Wrapper | CTL Commands
 """
 # pylint: disable=too-many-arguments,too-many-locals
 
+import os
+from contextlib import contextmanager
+
 from typing import Optional
-from .queries import gpus, pod
+from .queries import gpus, pod, user
 from .graphql import run_graphql_query
 from .mutations import pods
-
-from contextlib import contextmanager
-import os
 
 class APIContext:
     def __init__(self, api_name) -> None:
@@ -183,6 +183,18 @@ def get_pod(pod_id):
 
     with debug_error('get_pod') as ctx:
         ctx.req = pod.generate_pod_query(pod_id)
+        ctx.res = run_graphql_query(ctx.req)
+        cleaned_return = ctx.res["data"]
+
+        return cleaned_return
+
+def get_myself():
+    '''
+    Get myself
+    '''
+
+    with debug_error('get_myself') as ctx:
+        ctx.req = user.generate_myself_query()
         ctx.res = run_graphql_query(ctx.req)
         cleaned_return = ctx.res["data"]
 
