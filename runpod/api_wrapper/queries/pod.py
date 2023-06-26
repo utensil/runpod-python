@@ -8,13 +8,15 @@ def generate_pod_query(pod_id):
     query pod {{
       pod(input: {{podId: "{pod_id}"}}) {{
             id
+            imageName
+            machineId
             podType
             costPerHr
             desiredStatus
             lastStatusChange
             uptimeSeconds
             runtime {{ uptimeInSeconds }}
-            machine {{ maxDownloadSpeedMbps maxUploadSpeedMbps diskMBps }}
+            machine {{ podHostId maxDownloadSpeedMbps maxUploadSpeedMbps diskMBps }}
             latestTelemetry {{
                 cpuUtilization
                 memoryUtilization
