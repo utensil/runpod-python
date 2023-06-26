@@ -15,6 +15,7 @@ def generate_pod_query(pod_id):
             uptimeSeconds
             runtime {{ uptimeInSeconds }}
             machine {{ maxDownloadSpeedMbps maxUploadSpeedMbps }}
+            latestTelemetry {{ ...PodTelemetry }}
         }}
     }}
     """
