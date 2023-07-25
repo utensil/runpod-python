@@ -99,6 +99,8 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
             ports, volume_mount_path, env, support_public_ip, min_download, min_upload,
             network_volume_id, template_id, stop_after, terminate_after)
         ctx.res = run_graphql_query(ctx.req)
+        if ctx.res["errors"]:
+            raise APIError(ctx.res["errors"][0]["message"], ctx)
         cleaned_response = ctx.res["data"]["podFindAndDeployOnDemand"]
     return cleaned_response
 
