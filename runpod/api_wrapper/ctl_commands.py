@@ -100,7 +100,7 @@ def create_pod(name : str, image_name : str, gpu_type_id : str, cloud_type : str
             network_volume_id, template_id, stop_after, terminate_after)
         ctx.res = run_graphql_query(ctx.req)
         if ctx.res["errors"]:
-            raise APIError(ctx.res["errors"][0]["message"], ctx)
+            raise ValueError(ctx.res["errors"][0]["message"])
         cleaned_response = ctx.res["data"]["podFindAndDeployOnDemand"]
     return cleaned_response
 
@@ -120,6 +120,8 @@ def create_spot_pod(name, image_name, gpu_type_id, bid_per_gpu, cloud_type="ALL"
             ports, volume_mount_path, env, support_public_ip, min_download, min_upload,
             network_volume_id, template_id, stop_after, terminate_after)
         ctx.res = run_graphql_query(ctx.req)
+        if ctx.res["errors"]:
+            raise ValueError(ctx.res["errors"][0]["message"])
         cleaned_response = ctx.res["data"]["podRentInterruptable"]
 
         return cleaned_response
@@ -138,7 +140,6 @@ def stop_pod(pod_id: str):
     raw_response = run_graphql_query(
         pods.generate_pod_stop_mutation(pod_id)
     )
-
     cleaned_response = raw_response["data"]["podStop"]
     return cleaned_response
 
